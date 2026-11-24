@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.env
+reports/*
+!reports/example-brief.md
+sample_data/*.csv
