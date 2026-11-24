@@ -1,0 +1,27 @@
+name: Daily performance brief
+
+on:
+  schedule:
+    - cron: "15 11 * * *"   # 6:15 AM ET, before the team starts
+  workflow_dispatch:
+
+jobs:
+  brief:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+      - name: Build sample data
+        run: python sample_data/generate_sample.py
+      - name: Generate brief
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python -m analyst --data sample_data/ad_performance.csv
+      - uses: actions/upload-artifact@v4
+        with:
+          name: daily-brief
+          path: reports/
